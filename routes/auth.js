@@ -395,15 +395,21 @@ router.get('/telegram/callback', (req, res) => {
 });
 
 router.post('/refresh', (req, res) => {
-  const refreshed = tryRefreshSession(req, res);
-  if (!refreshed) {
-    return res.status(401).json({ error: 'Invalid refresh token' });
-  }
+  try {
+    const refreshed = tryRefreshSession(req, res);
+    if (!refreshed) {
+      return res.status(401).json({ error: 'Invalid refresh token' });
+    }
 
-  res.json({
-    user: toPublicUser(refreshed.user),
-    accessToken: refreshed.accessToken,
-  });
+    res.json({
+      user: toPublicUser(refreshed.user),
+      accessToken: refreshed.accessToken,
+    });
+  } catch (error) {
+    console.error('[auth/refresh]', error);
+    clearAuthCookies(res);
+    res.status(401).json({ error: 'Invalid refresh token' });
+  }
 });
 
 router.get('/me', authMiddleware, (req, res) => {
