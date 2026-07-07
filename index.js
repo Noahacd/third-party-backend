@@ -34,6 +34,15 @@ app.get('/health', (_req, res) => {
   res.json({ ok: true });
 });
 
+app.get('/test', (_req, res) => {
+  res.json({
+    ok: true,
+    message: 'third-party-backend is running',
+    timestamp: new Date().toISOString(),
+    env: process.env.NODE_ENV || 'development',
+  });
+});
+
 const server = app.listen(PORT, HOST, () => {
   console.log(`API server running on ${HOST}:${PORT}`);
 });
