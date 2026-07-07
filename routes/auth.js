@@ -190,7 +190,7 @@ router.get('/google/callback', async (req, res) => {
     });
 
     issueSession(res, user);
-    res.redirect(`${FRONTEND_URL}/dashboard`);
+    res.redirect(`${FRONTEND_URL}/`);
   } catch (error) {
     console.error('Google OAuth callback failed:', error);
     res.redirect(`${FRONTEND_URL}/?error=oauth_failed`);
@@ -251,7 +251,7 @@ router.get('/x/callback', async (req, res) => {
     });
 
     issueSession(res, user);
-    res.redirect(`${FRONTEND_URL}/dashboard`);
+    res.redirect(`${FRONTEND_URL}/`);
   } catch (error) {
     console.error('X OAuth callback failed:', error);
     res.redirect(`${FRONTEND_URL}/?error=x_oauth_failed`);
@@ -391,7 +391,7 @@ router.get('/telegram/callback', (req, res) => {
     return res.redirect(`${FRONTEND_URL}/?error=${result.error}`);
   }
 
-  res.redirect(`${FRONTEND_URL}/dashboard`);
+  res.redirect(`${FRONTEND_URL}/`);
 });
 
 router.post('/refresh', (req, res) => {

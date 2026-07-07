@@ -132,8 +132,8 @@ TELEGRAM_BOT_USERNAME=your_bot_username
 
 | 方法 | 路径 | 说明 |
 |------|------|------|
-| `GET` | `/auth/google/callback` | Google 回调，签发 Cookie，重定向 `/dashboard` |
-| `GET` | `/auth/x/callback` | X 回调，签发 Cookie，重定向 `/dashboard` |
+| `GET` | `/auth/google/callback` | Google 回调，签发 Cookie，重定向 `/` |
+| `GET` | `/auth/x/callback` | X 回调，签发 Cookie，重定向 `/` |
 | `GET` | `/auth/telegram/callback` | Telegram 服务端回调（备用；前端主要走 POST） |
 | `POST` | `/auth/telegram` | 客户端提交 Telegram 授权数据，返回 `{ user, accessToken }` |
 
@@ -203,7 +203,7 @@ X 用户若无公开邮箱，系统生成占位邮箱：`{username}@users.x.loca
        → GET /auth/{provider}/callback?code=...&state=...
        → 校验 state，换取用户信息，upsert 用户
        → Set-Cookie: access_token, refresh_token
-       → 302 → FRONTEND_URL/dashboard
+       → 302 → FRONTEND_URL/
 ```
 
 ### Telegram（前端主导）
@@ -214,7 +214,7 @@ X 用户若无公开邮箱，系统生成占位邮箱：`{username}@users.x.loca
        → 回到前端，hash 含 #tgAuthResult
        → 前端 POST /auth/telegram（body 为授权字段）
        → Set-Cookie + 返回 JSON
-       → 前端跳转 /dashboard
+       → 前端留在首页，HomeAuthSection 展示用户信息
 ```
 
 ## 第三方平台配置
