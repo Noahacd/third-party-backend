@@ -8,11 +8,12 @@ const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const authRouter = require('./routes/auth');
+const { parseAllowedOrigins } = require('./lib/cors');
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 const HOST = process.env.HOST || '0.0.0.0';
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://127.0.0.1:4050';
+const allowedOrigins = parseAllowedOrigins();
 const isProduction = process.env.NODE_ENV === 'production';
 
 if (isProduction) {
@@ -21,7 +22,14 @@ if (isProduction) {
 
 app.use(
   cors({
-    origin: FRONTEND_URL,
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, origin ?? true);
+        return;
+      }
+
+      callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
     credentials: true,
   })
 );
