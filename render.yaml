@@ -6,21 +6,15 @@ services:
   - type: web
     name: third-party-backend
     runtime: node
-    plan: starter
+    plan: free
     buildCommand: pnpm install --frozen-lockfile
     startCommand: pnpm start
     healthCheckPath: /health
-    disk:
-      name: sqlite-data
-      mountPath: /data
-      sizeGB: 1
     envVars:
       - key: NODE_ENV
         value: production
       - key: ENABLE_PNPM
         value: 'true'
-      - key: DATABASE_PATH
-        value: /data/app.db
       - key: FRONTEND_URL
         sync: false
       - key: JWT_SECRET

@@ -2,13 +2,34 @@ const fs = require('fs');
 const path = require('path');
 const Database = require('better-sqlite3');
 
-const defaultDataDir = path.join(__dirname, '..', 'data');
-const dbPath = process.env.DATABASE_PATH || path.join(defaultDataDir, 'app.db');
-const dbDir = path.dirname(dbPath);
+const defaultDbPath = path.join(__dirname, '..', 'data', 'app.db');
 
-if (!fs.existsSync(dbDir)) {
-  fs.mkdirSync(dbDir, { recursive: true });
+function ensureWritableDbPath(configuredPath) {
+  const candidatePath = configuredPath
+    ? path.resolve(configuredPath)
+    : defaultDbPath;
+  const candidateDir = path.dirname(candidatePath);
+
+  try {
+    if (!fs.existsSync(candidateDir)) {
+      fs.mkdirSync(candidateDir, { recursive: true });
+    }
+    return candidatePath;
+  } catch (err) {
+    if (err.code !== 'EACCES' && err.code !== 'EPERM') throw err;
+
+    const fallbackDir = path.dirname(defaultDbPath);
+    if (!fs.existsSync(fallbackDir)) {
+      fs.mkdirSync(fallbackDir, { recursive: true });
+    }
+    console.warn(
+      `[db] Cannot write to ${candidateDir} (${err.code}), using ${defaultDbPath}`,
+    );
+    return defaultDbPath;
+  }
 }
+
+const dbPath = ensureWritableDbPath(process.env.DATABASE_PATH);
 const db = new Database(dbPath);
 
 db.pragma('journal_mode = WAL');
